@@ -169,7 +169,8 @@ canvas{display:block}
    2) Şablonlar: kateqoriya başına 3 şablon (rəng, şrift, çərçivə, naxış)
    3) Interfeys: ana səhifə → şablonlar → redaktə
    ===================================================================== */
-const CONFIG = { brand: 'KHAN STUDIO', storeKey: 'khan-studio-v1' };
+/* Əlaqə məlumatları: whatsapp yerinə nömrəni ölkə kodu ilə yazın (məs. '994501234567'). Boş qalsa, düymə göstərilmir. */
+const CONFIG = { brand: 'KHAN STUDIO', storeKey: 'khan-studio-v1', whatsapp: '', instagram: 'ugur.khan.ai' };
 const W = 1080, H = 1620, CW = 780;
 
 const FAM = {
@@ -570,6 +571,166 @@ const CATS = [
         f: mkF({ names: { fam: 'sans', weight: 700, upper: true, sp: 6, max: 88 }, label: { sp: 12 }, detail: { fam: 'sans', weight: 400, size: 38 }, body: { fam: 'sans', size: 31 }, sub: { fam: 'sans', italic: false, size: 24 }, host: { fam: 'sans', italic: false, size: 27 } }) }
     ] }
 ];
+/* ---------- Əlavə motiv və çərçivələr ---------- */
+function initial(s){ const t = (s || '').trim(); return t ? azUpper(Array.from(t)[0]) : ''; }
+MOT.monogram = function(c, m, d){
+  c.lineWidth = 6; c.strokeStyle = m.color; c.beginPath(); c.arc(0, 0, 96, 0, Math.PI * 2); c.stroke();
+  c.lineWidth = 2; c.strokeStyle = m.color2; c.beginPath(); c.arc(0, 0, 82, 0, Math.PI * 2); c.stroke();
+  const i1 = initial(d.n1), i2 = initial(d.n2), f = { fam: 'serif', weight: 400, italic: true };
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  if(i1 || i2){
+    const two = i1 && i2, txt = two ? i1 + (m.sep ? ' ' + m.sep + ' ' : ' ') + i2 : (i1 || i2);
+    const sz = oneLineSize(c, txt, f, two ? 62 : 98, 30, 140, 0);
+    c.font = fontStr(f, sz); c.fillStyle = paint(c, m.text, -sz / 2, sz); c.fillText(txt, 0, 4);
+  } else { c.fillStyle = m.color; star(c, 0, 0, 40, 16, 5, 0); c.fill(); }
+  sparkle(c, -150, -20, 14, m.color); sparkle(154, 30, 12, m.color2); sparkle(-128, 70, 9, m.color2); sparkle(132, -64, 9, m.color);
+};
+MOT.badge = function(c, m, d){
+  c.strokeStyle = m.color; c.lineCap = 'round'; c.lineWidth = 3;
+  for(let i = 0; i < 28; i++){ const a = i * Math.PI * 2 / 28, r2 = i % 2 ? 126 : 138; c.beginPath(); c.moveTo(Math.cos(a) * 116, Math.sin(a) * 116); c.lineTo(Math.cos(a) * r2, Math.sin(a) * r2); c.stroke(); }
+  c.lineWidth = 7; c.beginPath(); c.arc(0, 0, 102, 0, Math.PI * 2); c.stroke();
+  c.lineWidth = 2; c.strokeStyle = m.color2; c.beginPath(); c.arc(0, 0, 88, 0, Math.PI * 2); c.stroke();
+  const age = (d.age || '').trim(); c.textAlign = 'center'; c.textBaseline = 'middle';
+  if(age){
+    const sz = age.length >= 3 ? 66 : 92; c.font = fontStr({ fam: 'serif', weight: 700 }, sz); c.fillStyle = paint(c, m.num, -sz / 2 - 8, sz); c.fillText(age, 0, -8);
+    c.font = fontStr({ fam: 'sans', weight: 600 }, 22); c.fillStyle = m.color; spaced(c, 'YAŞ', 0, 50, 10);
+  } else { c.fillStyle = m.color; star(c, 0, 0, 44, 18, 5, 0); c.fill(); }
+};
+MOT.gift = function(c, m){
+  c.fillStyle = m.box; rr(c, -84, 16, 168, 96, 8); c.fill();
+  c.fillStyle = m.lid; rr(c, -96, -20, 192, 40, 8); c.fill();
+  c.fillStyle = m.ribbon; c.fillRect(-13, -20, 26, 132);
+  c.lineWidth = 11; c.strokeStyle = m.ribbon; c.lineCap = 'round';
+  [-1, 1].forEach(function(s){ c.save(); c.translate(s * 32, -46); c.rotate(-s * 0.5); c.beginPath(); c.ellipse(0, 0, 34, 20, 0, 0, Math.PI * 2); c.stroke(); c.restore(); });
+  c.fillStyle = m.ribbon; c.beginPath(); c.arc(0, -40, 14, 0, Math.PI * 2); c.fill();
+  sparkle(c, -150, -30, 14, m.ribbon); sparkle(152, 10, 12, m.ribbon); sparkle(-130, 66, 9, m.ribbon);
+};
+FR.floralCorners = function(c, f){
+  c.save(); c.strokeStyle = f.color; c.globalAlpha = 0.4; c.lineWidth = 1.5; c.strokeRect(64, 64, W - 128, H - 128); c.globalAlpha = 1;
+  [[0, 0, 1, 1], [W, 0, -1, 1], [0, H, 1, -1], [W, H, -1, -1]].forEach(function(q){
+    c.save(); c.translate(q[0], q[1]); c.scale(q[2], q[3]);
+    c.strokeStyle = f.leaf; c.lineWidth = 4; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(70, 70); c.quadraticCurveTo(160, 74, 220, 150); c.stroke();
+    c.beginPath(); c.moveTo(70, 70); c.quadraticCurveTo(74, 160, 150, 220); c.stroke();
+    leaf(c, 118, 86, 48, 13, 0.15, f.leaf); leaf(c, 150, 100, 44, 12, 0.7, f.leaf); leaf(c, 86, 118, 48, 13, 1.42, f.leaf); leaf(c, 100, 150, 44, 12, 0.9, f.leaf);
+    flower(c, 92, 92, 44, 9, f.p1, f.p2, f.center); flower(c, 206, 132, 22, 7, f.p1, f.p2, f.center); flower(c, 132, 206, 22, 7, f.p1, f.p2, f.center);
+    c.restore();
+  });
+  c.restore();
+};
+FR.bands = function(c, f){
+  c.save(); c.fillStyle = f.color; c.fillRect(0, 0, W, 90); c.fillRect(0, H - 90, W, 90);
+  c.strokeStyle = f.color2; c.lineWidth = 3; c.beginPath(); c.moveTo(0, 104); c.lineTo(W, 104); c.moveTo(0, H - 104); c.lineTo(W, H - 104); c.stroke();
+  c.restore();
+};
+BOX.floralCorners = [150, 1445]; BOX.bands = [140, 1470];
+
+/* ---------- Əlavə şablonlar (hər kateqoriyada 10-a çatdırılır) ---------- */
+function C(accent, names, body, detail, sub, o){ return Object.assign({ label: accent, names: names, conn: accent, body: body, detail: detail, dlabel: accent, sub: sub, host: body, brand: accent }, o || {}); }
+const SANS = { detail: { fam: 'sans', weight: 400, size: 38 }, body: { fam: 'sans', size: 31 }, sub: { fam: 'sans', italic: false, size: 24 }, host: { fam: 'sans', italic: false, size: 27 } };
+function FS(kind, o){
+  const P = {
+    classic: { names: { upper: true, sp: 5, max: 104 }, label: { sp: 12 } },
+    italic: { names: { italic: true, max: 114 }, label: { sp: 12 } },
+    bold: { names: { weight: 700, upper: true, sp: 4, max: 100 }, label: { sp: 12 } },
+    light: Object.assign({ names: { fam: 'sans', weight: 300, upper: true, sp: 10, max: 90 }, label: { sp: 12 } }, SANS, { detail: { fam: 'sans', weight: 300, size: 40 } }),
+    sansb: Object.assign({ names: { fam: 'sans', weight: 800, upper: true, sp: 4, max: 108 }, label: { sp: 11 } }, SANS, { detail: { fam: 'sans', weight: 600, size: 40 } }),
+    sansm: Object.assign({ names: { fam: 'sans', weight: 600, upper: true, sp: 8, max: 88 }, label: { sp: 13, weight: 500 } }, SANS)
+  };
+  return mkF(Object.assign({}, P[kind], o || {}));
+}
+const BURG = { dir: 'radial', stops: ['#5C1527', '#3A0C19', '#240610'] };
+const EMER = { dir: 'radial', stops: ['#14584A', '#0A2F27', '#061C17'] };
+const NAVY = { dir: 'v', stops: ['#0B1530', '#142550', '#0B1530'] };
+const BLACK = { dir: 'v', stops: ['#0A0A0B', '#17130A'] };
+const G2 = '#D9B65A', G2N = ['#F8EBB8', '#E3C772', '#B8923A'];
+const EXTRA = {
+  toy: [
+    { id: 't4', name: 'Bordo Monoqram', tone: 'd', bg: BURG, pattern: { type: 'diamonds', color: G2, alpha: 0.06, size: 96 }, frame: { type: 'double', color: G2, color2: G2 },
+      motif: { type: 'monogram', h: 220, color: G2, color2: '#F3E3A9', text: G2N, sep: '&' }, divider: { type: 'flourish', color: G2 }, c: C(G2, '#F5E6C4', '#EAD5CC', '#FFF4DC', '#C9A8A0'), f: FS('italic') },
+    { id: 't5', name: 'Çəhrayı Qönçə', tone: 'l', bg: { dir: 'v', stops: ['#FBEAEA', '#F5D5D8'] }, pattern: null, frame: { type: 'floralCorners', color: '#C98B8F', leaf: '#8FA386', p1: '#E9A9B1', p2: '#F6D3D8', center: '#B76E79' },
+      motif: { type: 'rings', h: 220, color: '#B76E79', color2: '#E7B6BB' }, divider: { type: 'flourish', color: '#B76E79' }, c: C('#A25B66', '#4F2B33', '#69454C', '#42242B', '#8E6A71'), f: FS('italic') },
+    { id: 't6', name: 'Mavi Zərif', tone: 'l', bg: { dir: 'v', stops: ['#F3F7FB', '#DCE8F3'] }, pattern: null, frame: { type: 'arch', color: '#7F9BBB' },
+      motif: { type: 'florals', h: 200, p1: '#9DB7D5', p2: '#CFE0F0', center: '#5F7FA5', leaf: '#8AA392', leaf2: '#A7BDAE' }, divider: { type: 'flourish', color: '#7F9BBB' }, c: C('#5F7FA5', '#25395A', '#4A5F7E', '#1F3050', '#7A8DA8'), f: FS('italic', { names: { italic: true, max: 118 }, label: { sp: 12 } }) },
+    { id: 't7', name: 'Qara Monoqram', tone: 'd', bg: { dir: 'v', stops: ['#0B0B0C', '#141416'] }, pattern: null, frame: { type: 'single', color: '#F5F2E8', color2: '#C9A227' },
+      motif: { type: 'monogram', h: 220, color: '#C9A227', color2: '#F5F2E8', text: ['#FFFFFF', '#E6E6E6'], sep: '&' }, divider: { type: 'diamond', color: '#C9A227' }, c: C('#C9A227', '#FFFFFF', '#CFCBC0', '#FFFFFF', '#9A968A'), f: FS('light') },
+    { id: 't8', name: 'Şampan', tone: 'l', bg: { dir: 'v', stops: ['#F6EBD6', '#E9D5AF'] }, pattern: null, frame: { type: 'corners', color: '#8A6A3B' },
+      motif: { type: 'hearts', h: 210, variant: 'solid', color: '#8A6A3B', color2: '#C9A55C', sep: '#EFDFC0' }, divider: { type: 'double', color: '#8A6A3B' }, c: C('#7A5B2E', '#3E2D14', '#5B4527', '#3A2A12', '#8A7650'), f: FS('bold') },
+    { id: 't9', name: 'Gecə Qızılı', tone: 'd', bg: { dir: 'v', stops: ['#070A1A', '#101A3A', '#070A1A'] }, pattern: { type: 'stars', color: '#F1D98B', alpha: 0.7, count: 60, seed: 17 }, frame: { type: 'rounded', color: '#D4AF37' },
+      motif: { type: 'rings', h: 230, color: '#D4AF37', color2: '#F1D98B' }, divider: { type: 'star', color: '#D4AF37' }, c: C('#D4AF37', GOLD, '#C9D1E6', '#F4EFE0', '#9FB0D6'), f: FS('italic') },
+    { id: 't10', name: 'Nanə Çiçəyi', tone: 'l', bg: { dir: 'v', stops: ['#F6F8F3', '#E4EBDD'] }, pattern: null, frame: { type: 'floralCorners', color: '#7C9A7E', leaf: '#6F8F6F', p1: '#DDE8D5', p2: '#F1F5EC', center: '#B8923A' },
+      motif: { type: 'florals', h: 200, p1: '#C9D8BE', p2: '#EAF0E3', center: '#B8923A', leaf: '#6F8F6F', leaf2: '#8FAE8F' }, divider: { type: 'flourish', color: '#7C9A7E' }, c: C('#5E7F60', '#2F4A3A', '#4C6150', '#2A3F31', '#7C8F7E'), f: FS('classic', { names: { upper: true, sp: 5, max: 100 }, label: { sp: 12 } }) }
+  ],
+  nisan: [
+    { id: 'n4', name: 'Bordo Üzük', tone: 'd', bg: BURG, pattern: null, frame: { type: 'double', color: G2, color2: G2 },
+      motif: { type: 'diamondRing', h: 230, color: G2, color2: '#F3E3A9', gem1: '#FFFFFF', gem2: '#F5B5C0' }, divider: { type: 'diamond', color: G2 }, c: C(G2, '#F5E6C4', '#EAD5CC', '#FFF4DC', '#C9A8A0'), f: FS('italic') },
+    { id: 'n5', name: 'Lavanda', tone: 'l', bg: { dir: 'v', stops: ['#F1ECF9', '#DDD2F0'] }, pattern: null, frame: { type: 'rounded', color: '#7A5BA8' },
+      motif: { type: 'hearts', h: 210, variant: 'solid', color: '#8F6BC9', color2: '#C8B2EE', sep: '#E6DDF5' }, divider: { type: 'dots', color: '#7A5BA8' }, c: C('#6B4C9A', '#3E2C63', '#5B4A7C', '#33244F', '#8878A8'), f: FS('italic') },
+    { id: 'n6', name: 'Zümrüd Nişan', tone: 'd', bg: EMER, pattern: { type: 'dots', color: G2, alpha: 0.09, size: 54 }, frame: { type: 'double', color: G2, color2: G2 },
+      motif: { type: 'diamondRing', h: 230, color: G2, color2: '#F3E3A9', gem1: '#FFFFFF', gem2: '#9FE3C8' }, divider: { type: 'diamond', color: G2 }, c: C(G2, G2N, '#DCEBE5', '#FFFFFF', '#A9C8BE'), f: FS('light') },
+    { id: 'n7', name: 'Qara Qızıl', tone: 'd', bg: BLACK, pattern: { type: 'diamonds', color: '#D4AF37', alpha: 0.06, size: 96 }, frame: { type: 'corners', color: '#D4AF37' },
+      motif: { type: 'diamondRing', h: 230, color: '#D4AF37', color2: '#F1D98B', gem1: '#FFFFFF', gem2: '#F1D98B' }, divider: { type: 'flourish', color: '#D4AF37' }, c: C('#D4AF37', GOLD, '#E8E1CC', '#F4EFE0', '#B9B198'), f: FS('classic') },
+    { id: 'n8', name: 'Şaftalı', tone: 'l', bg: { dir: 'v', stops: ['#FEEFE3', '#F8D6BE'] }, pattern: null, frame: { type: 'floralCorners', color: '#D08C6F', leaf: '#8FA386', p1: '#F2B79B', p2: '#FADCC9', center: '#C9715A' },
+      motif: { type: 'monogram', h: 220, color: '#C9715A', color2: '#E8A98F', text: ['#8C3F2B', '#8C3F2B'], sep: '&' }, divider: { type: 'flourish', color: '#C9715A' }, c: C('#B2573F', '#5A2A1E', '#7A4A3C', '#4E2418', '#A07566'), f: FS('italic') },
+    { id: 'n9', name: 'Mavi Mərmər', tone: 'l', bg: { dir: 'v', stops: ['#F2F6FA', '#DDE6F0'] }, pattern: null, frame: { type: 'double', color: '#1E3A6E', color2: '#C9A227' },
+      motif: { type: 'diamondRing', h: 230, color: '#1E3A6E', color2: '#8EA6CF', gem1: '#FFFFFF', gem2: '#9CC3FF' }, divider: { type: 'diamond', color: '#C9A227' }, c: C('#A8821F', '#16315F', '#40567F', '#16315F', '#6A7FA3', { brand: '#16315F' }), f: FS('classic') },
+    { id: 'n10', name: 'Qırmızı Sevgi', tone: 'd', bg: { dir: 'radial', stops: ['#8A1426', '#5E0C1A', '#3A0610'] }, pattern: null, frame: { type: 'single', color: G2, color2: G2 },
+      motif: { type: 'hearts', h: 210, variant: 'solid', color: G2, color2: '#F8EBB8', sep: '#5E0C1A' }, divider: { type: 'star', color: G2 }, c: C(G2, '#F8EBB8', '#F3D9D2', '#FFF4DC', '#D1A8A0'), f: FS('italic') }
+  ],
+  adgunu: [
+    { id: 'a4', name: 'Pastel Çəhrayı', tone: 'l', ageLine: true, bg: { dir: 'v', stops: ['#FFE6EE', '#FFCFE1'] }, pattern: { type: 'confetti', colors: ['#FF7BAC', '#FFC0D9', '#9AD7E8', '#FFE08A'], alpha: 0.9, count: 120, seed: 31 }, frame: { type: 'rounded', color: '#E0679A' },
+      motif: { type: 'cake', h: 230, colors: ['#FFB6D0', '#FFD9E7', '#FF8FB8'], deco: '#FFFFFF', plate: '#F3C6D7', candle: '#7A2B4C', flame: '#FFB703' }, divider: { type: 'dots', color: '#E0679A' }, c: C('#D14C86', '#A82B63', '#7A4A5E', '#7A2B4C', '#A8798F', { age: '#D14C86' }), f: FS('sansb') },
+    { id: 'a5', name: 'Mavi Dünya', tone: 'l', ageLine: true, bg: { dir: 'v', stops: ['#E1F2FF', '#BFE3FA'] }, pattern: { type: 'confetti', colors: ['#2F80ED', '#FFD43B', '#FFFFFF', '#56CCF2'], alpha: 0.9, count: 120, seed: 41 }, frame: { type: 'rounded', color: '#1D4E89' },
+      motif: { type: 'balloons', h: 250, colors: ['#2F80ED', '#FFD43B', '#56CCF2'], string: '#1D4E89', spark: '#2F80ED' }, divider: { type: 'dots', color: '#2F80ED' }, c: C('#1D6FD1', '#0F3C73', '#2F5A8A', '#0F3C73', '#5E84B0', { age: '#1D6FD1' }), f: FS('sansb') },
+    { id: 'a6', name: 'Hədiyyə', tone: 'd', ageLine: true, bg: { dir: 'v', stops: ['#2A1250', '#4A1F7A'] }, pattern: { type: 'confetti', colors: ['#F1C40F', '#FF7BAC', '#FFFFFF', '#8E7CFF'], alpha: 0.9, count: 110, seed: 51 }, frame: { type: 'rounded', color: '#F1C40F' },
+      motif: { type: 'gift', h: 210, box: '#7B3FD1', lid: '#9B5CF0', ribbon: '#F1C40F' }, divider: { type: 'star', color: '#F1C40F' }, c: C('#F1C40F', ['#FFF2B3', '#F1C40F', '#C79A06'], '#E3D9F5', '#FFFFFF', '#B7A6DC', { age: '#FFFFFF' }), f: FS('sansb') },
+    { id: 'a7', name: 'Yaş Nişanı', tone: 'd', bg: BLACK, pattern: { type: 'stars', color: '#F1D98B', alpha: 0.7, count: 45, seed: 61 }, frame: { type: 'double', color: '#D4AF37', color2: '#8E6F1E' },
+      motif: { type: 'badge', h: 290, color: '#D4AF37', color2: '#F1D98B', num: GOLD }, divider: { type: 'diamond', color: '#D4AF37' }, c: C('#D4AF37', GOLD, '#E6E0CF', '#F4EFE0', '#B9B198'), f: FS('sansb', { names: { fam: 'sans', weight: 800, upper: true, sp: 4, max: 104 }, label: { sp: 11 } }) },
+    { id: 'a8', name: 'Nanə Şənlik', tone: 'l', ageLine: true, bg: { dir: 'v', stops: ['#E6F7F0', '#C9EBDC'] }, pattern: { type: 'confetti', colors: ['#2BB3A0', '#FF8A6B', '#FFD166', '#FFFFFF'], alpha: 0.9, count: 120, seed: 71 }, frame: { type: 'corners', color: '#2BB3A0' },
+      motif: { type: 'gift', h: 210, box: '#2BB3A0', lid: '#52CDBB', ribbon: '#FF8A6B' }, divider: { type: 'dots', color: '#2BB3A0' }, c: C('#1F9484', '#0F4A42', '#3E6B63', '#0F4A42', '#6F9A92', { age: '#1F9484' }), f: FS('sansb') },
+    { id: 'a9', name: 'Şəfəq', tone: 'd', ageLine: true, bg: { dir: 'd', stops: ['#FF9A5A', '#E84C7C', '#8E2C8C'] }, pattern: { type: 'confetti', colors: ['#FFFFFF', '#FFE08A', '#FFD0E0'], alpha: 0.85, count: 120, seed: 81 }, frame: { type: 'rounded', color: '#FFFFFF' },
+      motif: { type: 'balloons', h: 250, colors: ['#FFFFFF', '#FFE08A', '#FFD0E0'], string: '#FFFFFF', spark: '#FFFFFF' }, divider: { type: 'star', color: '#FFFFFF' }, c: C('#FFFFFF', '#FFFFFF', '#FFF0F5', '#FFFFFF', '#FFE3EC', { age: '#FFE08A' }), f: FS('sansb') },
+    { id: 'a10', name: 'Klassik Ad Günü', tone: 'l', bg: { dir: 'v', stops: ['#FDFBF6', '#F2ECDD'] }, pattern: null, frame: { type: 'double', color: '#1A1A1A', color2: '#C9A227' },
+      motif: { type: 'badge', h: 290, color: '#C9A227', color2: '#A8821F', num: ['#1A1A1A', '#2B2B2B'] }, divider: { type: 'double', color: '#C9A227' }, c: C('#A8821F', '#141414', '#4A4A4A', '#141414', '#8A8470'), f: FS('italic') }
+  ],
+  sunnet: [
+    { id: 's4', name: 'Kral Qızılı', tone: 'd', bg: BLACK, pattern: { type: 'diamonds', color: '#D4AF37', alpha: 0.06, size: 96 }, frame: { type: 'double', color: '#D4AF37', color2: '#8E6F1E' },
+      motif: { type: 'crown', h: 220, color: '#D4AF37', color2: '#F1D98B', jewel: ['#E0524F', '#4FA3FF', '#35C28A'] }, divider: { type: 'diamond', color: '#D4AF37' }, c: C('#D4AF37', GOLD, '#E8E1CC', '#F4EFE0', '#B9B198'), f: FS('bold', { names: { weight: 700, upper: true, sp: 5, max: 112 }, label: { sp: 9, size: 25 } }) },
+    { id: 's5', name: 'Dəniz Mavisi', tone: 'd', bg: { dir: 'v', stops: ['#0A4A5C', '#062C3A'] }, pattern: { type: 'dots', color: '#BFE9F0', alpha: 0.08, size: 54 }, frame: { type: 'rounded', color: '#D4AF37' },
+      motif: { type: 'crown', h: 220, color: '#D4AF37', color2: '#F1D98B', jewel: ['#2BC4D9', '#FFFFFF', '#2BC4D9'] }, divider: { type: 'dots', color: '#D4AF37' }, c: C('#D4AF37', '#FFFFFF', '#CDE7EE', '#FFFFFF', '#9CC6D0'), f: FS('sansb', { names: { fam: 'sans', weight: 800, upper: true, sp: 5, max: 108 }, label: { sp: 8, size: 24 } }) },
+    { id: 's6', name: 'Yaşıl Gecə', tone: 'd', bg: { dir: 'v', stops: ['#0A2A20', '#0F4636', '#0A2A20'] }, pattern: { type: 'islamic', color: '#D4AF37', alpha: 0.09, size: 120 }, frame: { type: 'arch', color: '#D4AF37' },
+      motif: { type: 'crescent', h: 200, color: '#D4AF37', star: '#F1D98B' }, divider: { type: 'star', color: '#D4AF37' }, c: C('#D4AF37', '#F5F2E8', '#CFE3DA', '#F5F2E8', '#9CBFB1'), f: FS('italic', { names: { italic: true, max: 118 }, label: { sp: 8, size: 24 } }) },
+    { id: 's7', name: 'Ağ Şahzadə', tone: 'l', bg: { dir: 'v', stops: ['#FDFCF8', '#F1EEE4'] }, pattern: null, frame: { type: 'double', color: '#16315F', color2: '#C9A227' },
+      motif: { type: 'crown', h: 220, color: '#C9A227', color2: '#E8CC6F', jewel: ['#16315F', '#C9A227', '#16315F'] }, divider: { type: 'diamond', color: '#C9A227' }, c: C('#A8821F', '#16315F', '#40567F', '#16315F', '#6A7FA3', { brand: '#16315F' }), f: FS('bold', { names: { weight: 700, upper: true, sp: 5, max: 108 }, label: { sp: 9, size: 25 } }) },
+    { id: 's8', name: 'Ulduzlu Göy', tone: 'l', bg: { dir: 'v', stops: ['#E8F3FC', '#C9E2F7'] }, pattern: { type: 'stars', color: '#C9A227', alpha: 0.7, count: 40, seed: 91 }, frame: { type: 'corners', color: '#16315F' },
+      motif: { type: 'crown', h: 220, color: '#C9A227', color2: '#F1D98B', jewel: ['#16315F', '#E0524F', '#16315F'] }, divider: { type: 'dots', color: '#C9A227' }, c: C('#9C7A1E', '#16315F', '#40567F', '#16315F', '#6A7FA3', { brand: '#16315F' }), f: FS('sansb', { names: { fam: 'sans', weight: 800, upper: true, sp: 5, max: 108 }, label: { sp: 9, size: 25 } }) },
+    { id: 's9', name: 'Bordo Taxt', tone: 'd', bg: BURG, pattern: null, frame: { type: 'corners', color: G2 },
+      motif: { type: 'crown', h: 220, color: G2, color2: '#F3E3A9', jewel: ['#E0524F', '#FFFFFF', '#E0524F'] }, divider: { type: 'flourish', color: G2 }, c: C(G2, '#F5E6C4', '#EAD5CC', '#FFF4DC', '#C9A8A0'), f: FS('italic', { names: { italic: true, max: 118 }, label: { sp: 9, size: 25 } }) },
+    { id: 's10', name: 'Monoqram', tone: 'd', bg: { dir: 'v', stops: ['#0B1530', '#142550'] }, pattern: null, frame: { type: 'single', color: '#D4AF37', color2: '#D4AF37' },
+      motif: { type: 'monogram', h: 220, color: '#D4AF37', color2: '#F1D98B', text: GOLD, sep: '' }, divider: { type: 'diamond', color: '#D4AF37' }, c: C('#D4AF37', '#FFFFFF', '#C9D1E6', '#FFFFFF', '#9FB0D6'), f: FS('light', { names: { fam: 'sans', weight: 300, upper: true, sp: 10, max: 96 }, label: { sp: 9, size: 25 } }) }
+  ],
+  yubiley: [
+    { id: 'y4', name: 'Qızıl Nişan', tone: 'd', bg: BLACK, pattern: null, frame: { type: 'rounded', color: '#D4AF37' },
+      motif: { type: 'badge', h: 290, color: '#D4AF37', color2: '#F1D98B', num: GOLD }, divider: { type: 'diamond', color: '#D4AF37' }, c: C('#D4AF37', GOLD, '#E8E1CC', '#F4EFE0', '#B9B198'), f: FS('classic', { names: { upper: true, sp: 4, max: 96 }, label: { sp: 12 } }) },
+    { id: 'y5', name: 'Zümrüd Yubiley', tone: 'd', bg: EMER, pattern: null, frame: { type: 'double', color: G2, color2: G2 },
+      motif: { type: 'laurel', h: 290, color: G2, color2: '#EAD28F', num: G2N }, divider: { type: 'star', color: G2 }, c: C(G2, G2N, '#DCEBE5', '#FFFFFF', '#A9C8BE'), f: FS('classic', { names: { upper: true, sp: 4, max: 96 }, label: { sp: 12 } }) },
+    { id: 'y6', name: 'Gecə Mavisi', tone: 'd', bg: NAVY, pattern: { type: 'stars', color: '#F1D98B', alpha: 0.7, count: 50, seed: 101 }, frame: { type: 'corners', color: '#D4AF37' },
+      motif: { type: 'laurel', h: 290, color: '#C9CDD6', color2: '#D4AF37', num: ['#FFFFFF', '#E6E6E6'] }, divider: { type: 'diamond', color: '#D4AF37' }, c: C('#D4AF37', '#FFFFFF', '#C9D1E6', '#FFFFFF', '#9FB0D6'), f: FS('light', { names: { fam: 'sans', weight: 300, upper: true, sp: 8, max: 84 }, label: { sp: 12 } }) },
+    { id: 'y7', name: 'Şampan Şərəf', tone: 'l', bg: { dir: 'v', stops: ['#F6EBD6', '#E9D5AF'] }, pattern: null, frame: { type: 'arch', color: '#8A6A3B' },
+      motif: { type: 'laurel', h: 270, color: '#8A6A3B', color2: '#B8985C', num: ['#5B4527', '#3A2A12'] }, divider: { type: 'flourish', color: '#8A6A3B' }, c: C('#7A5B2E', '#3E2D14', '#5B4527', '#3A2A12', '#8A7650'), f: FS('bold', { names: { weight: 700, upper: true, sp: 4, max: 92 }, label: { sp: 12 } }) },
+    { id: 'y8', name: 'Qara-Ağ Elegans', tone: 'l', bg: { dir: 'v', stops: ['#FFFFFF', '#F6F4EF'] }, pattern: null, frame: { type: 'bands', color: '#141414', color2: '#C9A227' },
+      motif: { type: 'laurel', h: 280, color: '#C9A227', color2: '#A8821F', num: ['#141414', '#2B2B2B'] }, divider: { type: 'double', color: '#C9A227' }, c: C('#A8821F', '#141414', '#4A4A4A', '#141414', '#8A8A8A', { brand: '#141414' }), f: FS('sansm', { names: { fam: 'sans', weight: 600, upper: true, sp: 8, max: 84 }, label: { sp: 13, weight: 500 } }) },
+    { id: 'y9', name: 'Kral Bənövşəyi', tone: 'd', bg: { dir: 'radial', stops: ['#4A1F7A', '#2E1250', '#1B0A33'] }, pattern: null, frame: { type: 'double', color: G2, color2: G2 },
+      motif: { type: 'laurel', h: 290, color: G2, color2: '#EAD28F', num: G2N }, divider: { type: 'flourish', color: G2 }, c: C(G2, '#F8EBB8', '#E3D9F5', '#FFFFFF', '#B7A6DC'), f: FS('italic', { names: { italic: true, max: 104 }, label: { sp: 12 } }) },
+    { id: 'y10', name: 'Qızıl Monoqram', tone: 'l', ageLine: true, bg: { dir: 'v', stops: ['#FDFBF6', '#F2ECDD'] }, pattern: null, frame: { type: 'floralCorners', color: '#B8923A', leaf: '#8FA386', p1: '#E8D6A8', p2: '#F6EBCF', center: '#B8923A' },
+      motif: { type: 'monogram', h: 220, color: '#B8923A', color2: '#D9B65A', text: ['#3A2A12', '#3A2A12'], sep: '' }, divider: { type: 'flourish', color: '#B8923A' }, c: C('#A8821F', '#2A2A2A', '#4A4A4A', '#2A2A2A', '#8A8470', { age: '#A8821F' }), f: FS('italic', { names: { italic: true, max: 104 }, label: { sp: 12 }, age: { fam: 'serif', weight: 400, size: 44, sp: 12 } }) }
+  ]
+};
+const TONE0 = { t1: 'd', t2: 'l', t3: 'd', n1: 'l', n2: 'd', n3: 'l', a1: 'd', a2: 'l', a3: 'l', s1: 'd', s2: 'd', s3: 'l', y1: 'd', y2: 'd', y3: 'l' };
+CATS.forEach(function(cat){
+  cat.tpls.forEach(function(t){ t.tone = TONE0[t.id] || t.tone; });
+  (EXTRA[cat.id] || []).forEach(function(t){ cat.tpls.push(t); });
+});
 CATS.forEach(function(cat){ cat.tpls.forEach(function(t){ t.box = BOX[t.frame.type]; }); });
 function catById(id){ return CATS.filter(function(c){ return c.id === id; })[0]; }
 function tplById(cat, id){ return cat.tpls.filter(function(t){ return t.id === id; })[0]; }
