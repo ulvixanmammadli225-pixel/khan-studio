@@ -62,6 +62,10 @@ canvas{display:block}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:26px 0 8px;text-align:center}
 .steps div{font-size:12px;color:var(--mute);line-height:1.3}
 .steps svg{display:block;margin:0 auto 6px;width:26px;height:26px;color:var(--gold)}
+.contact{margin-top:28px;text-align:center}
+.contact p{margin:0 0 12px;color:var(--mute);font-size:14px}
+.crow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.crow .btn{min-width:150px;text-decoration:none}
 .foot{margin-top:26px;text-align:center;color:#6d695e;font-size:12px;letter-spacing:.12em}
 
 /* Şablon siyahısı */
@@ -583,7 +587,7 @@ MOT.monogram = function(c, m, d){
     const sz = oneLineSize(c, txt, f, two ? 62 : 98, 30, 140, 0);
     c.font = fontStr(f, sz); c.fillStyle = paint(c, m.text, -sz / 2, sz); c.fillText(txt, 0, 4);
   } else { c.fillStyle = m.color; star(c, 0, 0, 40, 16, 5, 0); c.fill(); }
-  sparkle(c, -150, -20, 14, m.color); sparkle(154, 30, 12, m.color2); sparkle(-128, 70, 9, m.color2); sparkle(132, -64, 9, m.color);
+  sparkle(c, -150, -20, 14, m.color); sparkle(c, 154, 30, 12, m.color2); sparkle(c, -128, 70, 9, m.color2); sparkle(c, 132, -64, 9, m.color);
 };
 MOT.badge = function(c, m, d){
   c.strokeStyle = m.color; c.lineCap = 'round'; c.lineWidth = 3;
@@ -603,7 +607,7 @@ MOT.gift = function(c, m){
   c.lineWidth = 11; c.strokeStyle = m.ribbon; c.lineCap = 'round';
   [-1, 1].forEach(function(s){ c.save(); c.translate(s * 32, -46); c.rotate(-s * 0.5); c.beginPath(); c.ellipse(0, 0, 34, 20, 0, 0, Math.PI * 2); c.stroke(); c.restore(); });
   c.fillStyle = m.ribbon; c.beginPath(); c.arc(0, -40, 14, 0, Math.PI * 2); c.fill();
-  sparkle(c, -150, -30, 14, m.ribbon); sparkle(152, 10, 12, m.ribbon); sparkle(-130, 66, 9, m.ribbon);
+  sparkle(c, -150, -30, 14, m.ribbon); sparkle(c, 152, 10, 12, m.ribbon); sparkle(c, -130, 66, 9, m.ribbon);
 };
 FR.floralCorners = function(c, f){
   c.save(); c.strokeStyle = f.color; c.globalAlpha = 0.4; c.lineWidth = 1.5; c.strokeRect(64, 64, W - 128, H - 128); c.globalAlpha = 1;
@@ -923,6 +927,14 @@ function paintThumbs(root){
   });
 }
 
+function contactHtml(){
+  const wa = String(CONFIG.whatsapp || '').replace(/\D/g, ''), ig = String(CONFIG.instagram || '').replace(/^@/, '').trim();
+  if(!wa && !ig) return '';
+  let h = '<section class="contact" aria-label="Əlaqə"><p>Xüsusi dizayn və ya sifariş üçün bizimlə əlaqə saxlayın</p><div class="crow">';
+  if(wa) h += '<a class="btn pri" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WhatsApp</a>';
+  if(ig) h += '<a class="btn sec" href="https://instagram.com/' + encodeURIComponent(ig) + '" target="_blank" rel="noopener">Instagram</a>';
+  return h + '</div></section>';
+}
 function renderHome(){
   S.cat = null; S.tpl = null; document.title = CONFIG.brand;
   setTop({ back: false, home: false, title: '' });
@@ -935,6 +947,7 @@ function renderHome(){
     }).join('') + '</section>' +
     '<section class="steps" aria-label="Necə işləyir">' +
       '<div>' + ICON.grid + 'Kateqoriya seçin</div><div>' + ICON.card + 'Şablon seçin</div><div>' + ICON.pen + 'Məlumatı yazın</div><div>' + ICON.down + 'Şəkil kimi yükləyin</div></section>' +
+    contactHtml() +
     '<p class="foot">KHAN STUDIO</p>';
   paintThumbs(view);
 }
